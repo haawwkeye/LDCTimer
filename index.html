@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>LDC Timer</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+        <link rel="stylesheet" href="./css/index.css">
+    </head>
+    <body>
+        <a class="glow" id="Timer"></a>
+        <script>
+            function getFormattedTime() {
+                let Unix = 1616011200;
+                let now = new Date().getTime();
+
+                let totalSeconds = Math.floor((now/1000) - Unix);
+                
+                let hours = Math.floor(totalSeconds / 3600);
+                totalSeconds %= 3600;
+                let minutes = Math.floor(totalSeconds / 60);
+                let seconds = totalSeconds % 60;
+
+                if (minutes.toString().length < 2) minutes = `0${minutes.toString()}`;
+                if (seconds.toString().length < 2) seconds = `0${seconds.toString()}`;
+                
+                return `${hours}:${minutes}:${seconds}`;
+            }
+
+            $("#Timer").text(getFormattedTime);
+
+            window.internalTimerHandle = setInterval(() => {
+                $("#Timer").text(getFormattedTime);
+            }, 1000);
+        </script>
+    </body>
+</html>
