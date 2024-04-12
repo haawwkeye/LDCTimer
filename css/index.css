@@ -1,0 +1,28 @@
+:root {
+    color-scheme: dark;
+}
+
+#Timer {
+    font-size: 80px;
+    color: #fff;
+    text-align: center;
+    transition: 0.85s;
+}
+
+#Timer:hover {
+    color: gold;
+    transition: all 1s;
+}
+
+.glow {
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    from {
+        text-shadow: 0 0 10px, 0 0 20px;
+    }
+    to {
+        text-shadow: 0 0 20px, 0 0 30px;
+    }
+}
