@@ -14,7 +14,9 @@
     <br>
     <button onclick="ToggleMuted()">Toggle Audio</button>
     <br>
-    <a class="glow" id="Timer">Loading...</a>
+    <div id="TimerHolder">
+        <a class="glow" id="Timer">Loading...</a>
+    </div>
     <script>
         function ToggleMuted() {
             var TickMuted = localStorage.getItem("AudioMuted");
