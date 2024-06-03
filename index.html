@@ -1,35 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>LDC Timer</title>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-        <link rel="stylesheet" href="./css/index.css">
-    </head>
-    <body>
-        <a class="glow" id="Timer"></a>
-        <script>
-            function getFormattedTime() {
-                let Unix = 1616011200;
-                let now = new Date().getTime();
 
-                let totalSeconds = Math.floor((now/1000) - Unix);
-                
-                let hours = Math.floor(totalSeconds / 3600);
-                totalSeconds %= 3600;
-                let minutes = Math.floor(totalSeconds / 60);
-                let seconds = totalSeconds % 60;
+<head>
+    <title>LDC Timer</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="/css/index.css">
+</head>
 
-                if (minutes.toString().length < 2) minutes = `0${minutes.toString()}`;
-                if (seconds.toString().length < 2) seconds = `0${seconds.toString()}`;
-                
-                return `${hours}:${minutes}:${seconds}`;
+<body>
+    <a class="glow">TODO: Make better webui, settings instead of this funny button, stream audio(?), Make website
+        scalable (currently
+        it's fixed at whatever instead of supporting all sizes)</a>
+    <br>
+    <button onclick="ToggleMuted()">Toggle Audio</button>
+    <br>
+    <a class="glow" id="Timer">Loading...</a>
+    <script>
+        function ToggleMuted() {
+            var TickMuted = localStorage.getItem("AudioMuted");
+            if (TickMuted == "") {
+                TickMuted = "false";
             }
+            console.log(TickMuted)
+            console.log(TickMuted == "false")
+            localStorage.setItem("AudioMuted", TickMuted == "false")
+        }
+        const CallStartTime = 1616011200;
+        const CallEndTime = -1;
+        const floor = Math.floor;
+        const AudioPath = "/audio/Tick2.mp3"
+        var firstTick = true;
+        function playTick() {
+            if (firstTick) { firstTick = false; return; }
+            var TickMuted = localStorage.getItem("AudioMuted");
+            if (TickMuted == "true") return;
+            var Tick = new Audio(AudioPath);
+            Tick.volume = 0.2;
+            Tick.onended = () => {
+                delete Tick
+            }
+            Tick.play()
+        }
 
-            $("#Timer").text(getFormattedTime);
+        function GetTotalTime(seconds) {
+            let minutes = (seconds / 60).toFixed(3);
+            let hours = (minutes / 60).toFixed(3);
+            let days = (hours / 24).toFixed(3);
+            let months = (days / 30.417).toFixed(3);
+            let years = (months / 12).toFixed(3);
 
-            window.internalTimerHandle = setInterval(() => {
-                $("#Timer").text(getFormattedTime);
-            }, 1000);
-        </script>
-    </body>
+            let totalSeconds = seconds;
+            let Timer_hours = Math.floor(totalSeconds / 3600);
+            totalSeconds %= 3600;
+            let Timer_minutes = Math.floor(totalSeconds / 60);
+            let Timer_seconds = Math.floor(totalSeconds % 60);
+
+            if (Timer_minutes.toString().length < 2) Timer_minutes = `0${Timer_minutes.toString()}`;
+            if (Timer_seconds.toString().length < 2) Timer_seconds = `0${Timer_seconds.toString()}`;
+
+            return {
+                years: years,
+                months: months,
+                days: days,
+                hours: hours,
+                minutes: minutes,
+                seconds: seconds.toFixed(3),
+
+                Timer: `${Timer_hours}:${Timer_minutes}:${Timer_seconds}`
+            }
+        }
+        function getFormattedTime() {
+            let Unix = CallStartTime;
+            let now;
+            if (CallEndTime > -1) {
+                now = CallEndTime;
+                if (window.internalTimerHandle) clearInterval(window.internalTimerHandle);
+            } else now = new Date().getTime();
+
+            let TotalTime = GetTotalTime((now / 1000) - Unix);
+
+            return `${TotalTime.Timer}\nYear(s): ${TotalTime.years}\nMonths(s) (Not Exact): ${TotalTime.months}\nDay(s): ${TotalTime.days}\nHour(s): ${TotalTime.hours}\nMinute(s): ${TotalTime.minutes}\nSecond(s): ${TotalTime.seconds}`.replaceAll("\n", "<br>");
+        }
+        function syncTime() {
+            $("#Timer").html(getFormattedTime);
+            console.log("Syncing Timer...")
+            let Unix = CallStartTime;
+            let now = new Date().getTime();
+            let totalSeconds = (now / 1000) - Unix;
+            let offset = 1 - (totalSeconds - Math.floor(totalSeconds));
+            console.log(1 - (offset), offset)
+            setTimeout(() => {
+                now = new Date().getTime();
+                totalSeconds = (now / 1000) - Unix;
+                offset = 1 - (totalSeconds - Math.floor(totalSeconds));
+                console.log(1 - (offset), offset)
+                console.log("Timer Synced (hopefully)!")
+                window.internalTimerHandle = setInterval(() => {
+                    playTick()
+                    $("#Timer").html(getFormattedTime);
+                }, 1000);
+            }, offset * 1000)
+        }
+
+        syncTime();
+    </script>
+</body>
+
 </html>

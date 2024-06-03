@@ -2,6 +2,10 @@
     color-scheme: dark;
 }
 
+button {
+    background-color: transparent;
+}
+
 #Timer {
     font-size: 80px;
     color: #fff;
@@ -20,9 +24,10 @@
 
 @keyframes glow {
     from {
-        text-shadow: 0 0 10px, 0 0 20px;
+        text-shadow: 0 0 5px, 0 0 15px;
     }
+
     to {
-        text-shadow: 0 0 20px, 0 0 30px;
+        text-shadow: 0 0 10px, 0 0 20px;
     }
 }
