@@ -101,9 +101,9 @@
             if (CallEndTime > -1) {
                 now = CallEndTime;
                 if (window.internalTimerHandle) clearInterval(window.internalTimerHandle);
-            } else now = new Date().getTime();
+            } else now = (new Date().getTime() / 1000);
 
-            let TotalTime = GetTotalTime((now / 1000) - Unix);
+            let TotalTime = GetTotalTime(now - Unix);
 
             return `${TotalTime.Timer}\nYear(s): ${TotalTime.years}\nMonths(s) (Not Exact): ${TotalTime.months}\nDay(s): ${TotalTime.days}\nHour(s): ${TotalTime.hours}\nMinute(s): ${TotalTime.minutes}\nSecond(s): ${TotalTime.seconds}`.replaceAll("\n", "<br>");
         }
