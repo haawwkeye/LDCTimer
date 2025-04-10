@@ -26,6 +26,10 @@ button {
     animation: glow 2s ease-in-out infinite alternate;
 }
 
+.center {
+    text-align: center;
+}
+
 @keyframes glow {
     from {
         text-shadow: 0 0 5px, 0 0 15px;
